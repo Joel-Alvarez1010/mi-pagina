@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JYB Netlearn</title>
+  <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+
+  <!-- Barra de navegación -->
+  <nav>
+    <ul class="navbar">
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="cursos.html">Cursos</a></li>
+      <li><a href="acerca-de-nosotros.html">Acerca de Nosotros</a></li>
+      <li><a href="contacto.html">Contacto</a></li>
+      <li><a href="#" onclick="mostrarModal('loginModal')">Iniciar Sesión</a></li>
+      <li><a href="#" onclick="mostrarModal('registroModal')">Registrarse</a></li>
+      <li><a href="#" onclick="mostrarModal('perfilModal')">Perfil</a></li>
+    </ul>
+  </nav>
+
+  <!-- Encabezado -->
+  <header id="inicio">
+    <h1>JYB Netlearn</h1>
+    <p>Aprende. Crea. Evoluciona.</p>
+  </header>
+
+  <!-- Contenido principal -->
+  <main>
+    <section id="bienvenida">
+      <h2>Bienvenido a JYB Netlearn</h2>
+      <p>Tu plataforma para aprender de manera fácil, rápida y a tu ritmo.</p>
+    </section>
+
+    <section id="cursos">
+      <h2>Nuestros Cursos</h2>
+      <p>Explora nuestras categorías y empieza a aprender hoy.</p>
+    </section>
+
+    <section id="nosotros">
+      <h2>Acerca de Nosotros</h2>
+      <p>JYB Netlearn nació con la idea de hacer el aprendizaje accesible para todos.</p>
+    </section>
+
+    <section id="contacto">
+      <h2>Contacto</h2>
+      <p>¿Tienes dudas o quieres colaborar con nosotros? ¡Escríbenos!</p>
+    </section>
+  </main>
+
+  <!-- Pie de página -->
+  <footer>
+    <p>&copy; 2025 JYB Netlearn - Todos los derechos reservados.</p>
+  </footer>
+
+  <!-- Modales -->
+  <!-- Modal de Iniciar Sesión -->
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="cerrarModal('loginModal')">&times;</span>
+      <h3>Iniciar Sesión</h3>
+      <input type="email" id="loginCorreo" placeholder="Correo electrónico" required />
+      <input type="password" id="loginContraseña" placeholder="Contraseña" required />
+      <button onclick="iniciarSesion()">Entrar</button>
+    </div>
+  </div>
+
+  <!-- Modal de Registro -->
+  <div id="registroModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="cerrarModal('registroModal')">&times;</span>
+      <h3>Registrarse</h3>
+      <input type="text" id="nombre" placeholder="Nombre completo" required />
+      <input type="email" id="correo" placeholder="Correo electrónico" required />
+      <input type="password" id="contraseña" placeholder="Contraseña" required />
+      <button onclick="registrarse()">Registrar</button>
+    </div>
+  </div>
+
+  <!-- Modal de Perfil -->
+  <div id="perfilModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="cerrarModal('perfilModal')">&times;</span>
+      <h3>Perfil de Usuario</h3>
+      <p><strong>Nombre:</strong> <span id="perfilNombre">No registrado</span></p>
+      <p><strong>Correo electrónico:</strong> <span id="perfilCorreo">No registrado</span></p>
+      <button onclick="cerrarSesion()">Cerrar Sesión</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    function mostrarModal(id) {
+      document.getElementById(id).style.display = 'flex';
+    }
+
+    function cerrarModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+      if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+      }
+    }
+
+    function registrarse() {
+      const nombre = document.getElementById("nombre").value;
+      const correo = document.getElementById("correo").value;
+      const contraseña = document.getElementById("contraseña").value;
+
+      if (nombre && correo && contraseña) {
+        localStorage.setItem("usuario_nombre", nombre);
+        localStorage.setItem("usuario_correo", correo);
+        localStorage.setItem("usuario_contraseña", contraseña);
+        localStorage.setItem("usuario_logueado", "true");
+
+        alert("Registro exitoso");
+        cerrarModal('registroModal');
+        actualizarPerfil();
+      } else {
+        alert("Por favor completa todos los campos.");
+      }
+    }
+
+    function iniciarSesion() {
+      const correoIngresado = document.getElementById("loginCorreo").value;
+      const contraseñaIngresada = document.getElementById("loginContraseña").value;
+
+      const correoGuardado = localStorage.getItem("usuario_correo");
+      const contraseñaGuardada = localStorage.getItem("usuario_contraseña");
+
+      if (correoIngresado === correoGuardado && contraseñaIngresada === contraseñaGuardada) {
+        localStorage.setItem("usuario_logueado", "true");
+        alert("Inicio de sesión exitoso");
+        cerrarModal('loginModal');
+        actualizarPerfil();
+      } else {
+        alert("Correo o contraseña incorrectos");
+      }
+    }
+
+    function actualizarPerfil() {
+      const logueado = localStorage.getItem("usuario_logueado");
+      const nombre = localStorage.getItem("usuario_nombre");
+      const correo = localStorage.getItem("usuario_correo");
+
+      document.getElementById("perfilNombre").innerText = logueado === "true" ? nombre : "No registrado";
+      document.getElementById("perfilCorreo").innerText = logueado === "true" ? correo : "No registrado";
+    }
+
+    function cerrarSesion() {
+      localStorage.setItem("usuario_logueado", "false");
+      actualizarPerfil();
+      alert("Sesión cerrada");
+    }
+
+    window.onload = function () {
+      actualizarPerfil();
+    };
+  </script>
+
+</body>
+</html>
+
